@@ -18,15 +18,27 @@ jobs:
         with:
           node-version: '18'
  
-      - name: Install dependencies
+- name: Install backend dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Install frontend dependencies
         run: |
           cd frontend
-          npm install
- 
-      - name: Build project
+          npm ci
+
+      - name: Run backend tests
+        run: |
+          cd backend
+          npm test
+
+      - name: Build frontend
         run: |
           cd frontend
           npm run build
+        env:
+          REACT_APP_API_URL: "http://54.237.215.105:3001"
  
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -35,6 +47,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
  
-      - name: Deploy to S3
+      - name: Deploy frontend to S3
         run: |
           aws s3 cp frontend/build/ s3://frontend-bucket-0fbdbc1/ --recursive
+
+      - name: Invalidate CloudFront cache
+        run: |
+          echo "Note: Configure CloudFront distribution ID in workflow secrets for advanced caching"
