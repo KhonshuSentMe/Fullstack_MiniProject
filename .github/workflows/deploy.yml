@@ -17,8 +17,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
- 
-- name: Install backend dependencies
+
+      - name: Install backend dependencies
         run: |
           cd backend
           npm ci
