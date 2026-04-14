@@ -1,0 +1,40 @@
+name: Deploy Frontend to S3
+ 
+on:
+  push:
+    branches:
+      - main
+ 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+ 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+ 
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install
+ 
+      - name: Build project
+        run: |
+          cd frontend
+          npm run build
+ 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AKIAWKMNLUJRNPGTGL2P }}
+          aws-secret-access-key: ${{ secrets.Z7ibxkq5L/OhaefF+qHLPnrbjkBYJRjodjZqXJQ+  }}
+          aws-region: us-east-1
+ 
+      - name: Deploy to S3
+        run: |
+          aws s3 cp frontend/build/ s3://frontend-bucket-0fbdbc1/ --recursive
